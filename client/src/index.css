@@ -1,0 +1,71 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Eco-Friendly Himalayan Theme Colors */
+  --primary-color: #10B981; /* Emerald Green */
+  --secondary-color: #059669; /* Dark Green */
+  --accent-yellow: #F59E0B; /* Amber/Gold for rewards */
+  --earth-brown: #92400E; /* Earth Brown */
+  --sky-blue: #0EA5E9; /* Himalayan Sky */
+  --mountain-gray: #475569; /* Mountain Gray */
+  --forest-green: #065F46; /* Deep Forest */
+  --leaf-green: #34D399; /* Light Leaf Green */
+  --text-dark: #1F2937;
+  --text-light: #6B7280;
+  --bg-light: #F0FDF4; /* Light Green Tint */
+  --bg-white: #FFFFFF;
+  --border-color: #D1D5DB;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 50%, #A7F3D0 100%);
+  padding: 0;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  #root {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 1025px) {
+  #root {
+    align-items: flex-start;
+    padding: 0;
+  }
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

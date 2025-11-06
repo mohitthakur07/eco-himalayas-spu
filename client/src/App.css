@@ -1,0 +1,47 @@
+.app-container {
+  width: 100%;
+  height: 100vh;
+  background: white;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+  .app-container {
+    border-radius: 0;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .app-container {
+    max-width: 768px;
+    height: 90vh;
+    max-height: 1024px;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1025px) {
+  .app-container {
+    max-width: 100%;
+    width: 100%;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Large Desktop - contained layout */
+@media (min-width: 1440px) {
+  .app-container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}
