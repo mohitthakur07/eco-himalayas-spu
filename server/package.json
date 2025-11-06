@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "echo 'Server coming soon...'",
-    "build": "echo 'Server build coming soon...'",
+    "dev": "nodemon index.js",
     "start": "node index.js",
     "test": "echo 'Tests coming soon...'"
   },
@@ -18,7 +17,20 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "qrcode": "^1.5.3",
+    "uuid": "^9.0.1",
+    "mongoose": "^8.0.3",
+    "express-validator": "^7.0.1",
+    "express-rate-limit": "^7.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
 }
 

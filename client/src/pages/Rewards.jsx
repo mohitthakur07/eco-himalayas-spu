@@ -1,10 +1,43 @@
-import { ArrowLeft, MoreVertical, ArrowRight, Hotel, Utensils, Backpack, MapPin, Leaf, Gift, Award } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, MoreVertical, ArrowRight, Hotel, Utensils, Backpack, MapPin, Leaf, Gift, Award, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import BottomNav from '../components/BottomNav'
+import QRGenerator from '../components/QRGenerator'
+import { userService } from '../services/userService'
+import { rewardService } from '../services/rewardService'
+import { authService } from '../services/authService'
 import './Rewards.css'
 
 const Rewards = () => {
   const navigate = useNavigate()
+  const [balance, setBalance] = useState(0)
+  const [transactions, setTransactions] = useState([])
+  const [showQRGenerator, setShowQRGenerator] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      if (authService.isAuthenticated()) {
+        const balanceData = await userService.getBalance()
+        setBalance(balanceData.balance)
+        
+        const historyData = await rewardService.getHistory()
+        setTransactions(historyData.transactions)
+      }
+    } catch (error) {
+      console.error('Failed to load data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleQRGenerated = () => {
+    loadData()
+  }
 
   const stores = [
     { name: 'All', active: true },
@@ -70,15 +103,15 @@ const Rewards = () => {
               <p className="balance-label">Eco Points</p>
               <h1 className="balance-amount">
                 <Leaf size={32} strokeWidth={2.5} style={{ marginRight: '8px' }} />
-                250
+                {loading ? '...' : balance}
               </h1>
             </div>
-            <button className="gift-btn">
-              <Gift size={24} />
+            <button className="gift-btn" onClick={() => setShowQRGenerator(true)}>
+              <Plus size={24} />
             </button>
           </div>
-          <button className="rewards-link">
-            View Green Stamp Rewards <ArrowRight size={16} />
+          <button className="rewards-link" onClick={() => setShowQRGenerator(true)}>
+            Generate QR Code <ArrowRight size={16} />
           </button>
         </div>
 
@@ -136,6 +169,13 @@ const Rewards = () => {
       </div>
 
       <BottomNav />
+
+      {showQRGenerator && (
+        <QRGenerator 
+          onClose={() => setShowQRGenerator(false)}
+          onGenerated={handleQRGenerated}
+        />
+      )}
     </div>
   )
 }

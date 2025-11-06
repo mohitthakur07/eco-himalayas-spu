@@ -1,10 +1,35 @@
+import { useState, useEffect } from 'react'
 import { ArrowRight, Leaf, Recycle, TreePine, Droplet, Gift, Star, Award, QrCode, Scan, Zap } from 'lucide-react'
 import Header from '../components/Header'
 import BottomNav from '../components/BottomNav'
+import { authService } from '../services/authService'
+import { userService } from '../services/userService'
 import './Home.css'
 
 const Home = () => {
   const rewardStars = Array(10).fill(0)
+  const [user, setUser] = useState(null)
+  const [balance, setBalance] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadUserData()
+  }, [])
+
+  const loadUserData = async () => {
+    try {
+      const currentUser = authService.getCurrentUser()
+      if (currentUser) {
+        setUser(currentUser)
+        const balanceData = await userService.getBalance()
+        setBalance(balanceData.balance)
+      }
+    } catch (error) {
+      console.error('Failed to load user data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="app-container">
@@ -33,9 +58,9 @@ const Home = () => {
                 <div className="qr-corner qr-corner-br"></div>
               </div>
 
-              <button className="scan-btn-primary">
+              <button className="scan-btn-primary" onClick={() => window.location.href = '/rewards'}>
                 <Scan size={22} strokeWidth={2.5} />
-                Scan Now
+                Generate QR Code
               </button>
 
               <p className="qr-hint">Point your camera at any eco-task QR code</p>
@@ -52,14 +77,14 @@ const Home = () => {
                 <p className="balance-label">Eco Points</p>
                 <h1 className="balance-amount">
                   <Leaf size={32} strokeWidth={2.5} style={{ marginRight: '8px' }} />
-                  250
+                  {loading ? '...' : balance}
                 </h1>
               </div>
               <button className="gift-btn">
                 <Gift size={24} />
               </button>
             </div>
-            <button className="rewards-link">
+            <button className="rewards-link" onClick={() => window.location.href = '/rewards'}>
               View Green Stamp Rewards <ArrowRight size={16} />
             </button>
           </div>
