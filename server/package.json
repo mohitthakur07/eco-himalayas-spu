@@ -1,0 +1,24 @@
+{
+  "name": "ecohimalya-server",
+  "version": "1.0.0",
+  "description": "Eco Himalayas Backend API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'Server coming soon...'",
+    "build": "echo 'Server build coming soon...'",
+    "start": "node index.js",
+    "test": "echo 'Tests coming soon...'"
+  },
+  "keywords": [
+    "eco",
+    "himalayas",
+    "sustainability",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
+
