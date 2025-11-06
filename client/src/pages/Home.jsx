@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
-import { ArrowRight, Leaf, Recycle, TreePine, Droplet, Gift, Star, Award, QrCode, Scan, Zap } from 'lucide-react'
+import { Leaf, Gift, QrCode, Zap, Sparkles } from 'lucide-react'
 import Header from '../components/Header'
 import BottomNav from '../components/BottomNav'
+import QRGenerator from '../components/QRGenerator'
 import { authService } from '../services/authService'
 import { userService } from '../services/userService'
-import './Home.css'
 
 const Home = () => {
   const rewardStars = Array(10).fill(0)
   const [user, setUser] = useState(null)
   const [balance, setBalance] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [showQRGenerator, setShowQRGenerator] = useState(false)
 
   useEffect(() => {
     loadUserData()
@@ -31,135 +32,77 @@ const Home = () => {
     }
   }
 
+  const handleQRGenerated = () => {
+    loadUserData() // Refresh balance after QR generation
+  }
+
+  const handleGenerateClick = () => {
+    if (!authService.isAuthenticated()) {
+      alert('Please login to generate QR codes')
+      return
+    }
+    setShowQRGenerator(true)
+  }
+
   return (
     <div className="app-container">
       <Header />
 
       <div className="page-content">
         {/* Hero QR Scanner Section */}
-        <div className="qr-hero-section">
-          <div className="qr-hero-content">
-            <div className="qr-hero-badge">
+        <div className="mb-6">
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-semibold mb-3">
               <Zap size={16} strokeWidth={2.5} />
               <span>Instant Rewards</span>
             </div>
-            <h2 className="qr-hero-title">Scan QR Code</h2>
-            <p className="qr-hero-subtitle">Complete eco-tasks and earn instant rewards</p>
-
-            <div className="qr-scanner-card">
-              <div className="qr-scanner-visual">
-                <div className="qr-scan-frame">
-                  <QrCode size={100} strokeWidth={1.5} />
-                  <div className="scan-line"></div>
-                </div>
-                <div className="qr-corner qr-corner-tl"></div>
-                <div className="qr-corner qr-corner-tr"></div>
-                <div className="qr-corner qr-corner-bl"></div>
-                <div className="qr-corner qr-corner-br"></div>
-              </div>
-
-              <button className="scan-btn-primary" onClick={() => window.location.href = '/rewards'}>
-                <Scan size={22} strokeWidth={2.5} />
-                Generate QR Code
-              </button>
-
-              <p className="qr-hint">Point your camera at any eco-task QR code</p>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Generate QR codes and earn surprise eco-coins!</h2>
           </div>
-        </div>
 
-        {/* Dashboard Grid for Desktop */}
-        <div className="dashboard-grid">
-          {/* Eco Points Balance Card */}
-          <div className="balance-card">
-            <div className="balance-header">
-              <div>
-                <p className="balance-label">Eco Points</p>
-                <h1 className="balance-amount">
-                  <Leaf size={32} strokeWidth={2.5} style={{ marginRight: '8px' }} />
-                  {loading ? '...' : balance}
-                </h1>
+          <div className="bg-gradient-to-br from-primary-50 to-green-100 rounded-3xl p-8 text-center shadow-lg">
+            <div className="relative mb-6">
+              <div className="w-28 h-28 mx-auto bg-white rounded-2xl flex items-center justify-center shadow-md">
+                <QrCode size={80} strokeWidth={1.5} className="text-primary-600" />
               </div>
-              <button className="gift-btn">
-                <Gift size={24} />
-              </button>
             </div>
-            <button className="rewards-link" onClick={() => window.location.href = '/rewards'}>
-              View Green Stamp Rewards <ArrowRight size={16} />
+
+            <button 
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-95 mb-3"
+              onClick={handleGenerateClick}
+            >
+              <Sparkles size={22} strokeWidth={2.5} />
+              Generate & Earn
             </button>
-          </div>
 
-          {/* Green Stamp Progress Card */}
-          <div className="reward-card">
-            <h3 className="reward-title">Earn Green Stamp</h3>
-            <p className="reward-subtitle">Complete 10 eco-tasks to get certified</p>
-
-            <div className="stars-container">
-              {rewardStars.map((_, index) => (
-                <div key={index} className="star">
-                  <Star
-                    size={24}
-                    fill={index < 6 ? 'var(--primary-color)' : 'none'}
-                    stroke={index < 6 ? 'var(--primary-color)' : 'var(--text-light)'}
-                    strokeWidth={2}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <p className="progress-text">6 of 10 tasks completed</p>
+            <p className="text-sm text-gray-600 font-medium">Get 5-60 eco-coins per QR code!</p>
           </div>
         </div>
 
-        {/* Eco Tasks Section */}
-        <div className="ecohimalya-section">
-          <h3 className="section-title">Eco-Friendly Tasks</h3>
-
-          <div className="ecohimalya-cards">
-            <div className="ecohimalya-card waste">
-              <div className="card-icon">
-                <Recycle size={32} strokeWidth={2} />
-              </div>
-              <p className="card-label">Waste Management</p>
-              <p className="card-question">Properly dispose waste at designated bins</p>
-              <div className="card-points">+50 pts</div>
-              <ArrowRight className="card-arrow" size={20} />
+        {/* Eco Points Balance Card */}
+        <div className="bg-white rounded-3xl p-6 shadow-lg mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-sm text-gray-500 font-medium mb-1">Eco Points</p>
+              <h1 className="text-4xl font-bold text-gray-900 flex items-center">
+                <Leaf size={32} strokeWidth={2.5} className="text-primary-500 mr-2" />
+                {loading ? '...' : balance}
+              </h1>
             </div>
-
-            <div className="ecohimalya-card water">
-              <div className="card-icon">
-                <Droplet size={32} strokeWidth={2} />
-              </div>
-              <p className="card-label">Water Conservation</p>
-              <p className="card-question">Use refillable bottles during your trek</p>
-              <div className="card-points">+30 pts</div>
-              <ArrowRight className="card-arrow" size={20} />
-            </div>
-
-            <div className="ecohimalya-card green">
-              <div className="card-icon">
-                <Award size={32} strokeWidth={2} />
-              </div>
-              <p className="card-label">Support Local</p>
-              <p className="card-question">Shop at Green Stamp certified businesses</p>
-              <div className="card-points">+40 pts</div>
-              <ArrowRight className="card-arrow" size={20} />
-            </div>
-
-            <div className="ecohimalya-card forest">
-              <div className="card-icon">
-                <TreePine size={32} strokeWidth={2} />
-              </div>
-              <p className="card-label">Trail Respect</p>
-              <p className="card-question">Stay on marked paths, protect wildlife</p>
-              <div className="card-points">+35 pts</div>
-              <ArrowRight className="card-arrow" size={20} />
-            </div>
+            <button className="w-12 h-12 bg-yellow-50 hover:bg-yellow-100 rounded-full flex items-center justify-center transition-colors">
+              <Gift size={24} className="text-yellow-600" />
+            </button>
           </div>
         </div>
       </div>
 
       <BottomNav />
+
+      {showQRGenerator && (
+        <QRGenerator 
+          onClose={() => setShowQRGenerator(false)}
+          onGenerated={handleQRGenerated}
+        />
+      )}
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Rewards from './pages/Rewards'
 import EcoProfile from './pages/EcoProfile'
-import './App.css'
+import Leaderboard from './pages/Leaderboard'
 
 function App() {
   return (
@@ -11,6 +11,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/rewards" element={<Rewards />} />
         <Route path="/shop" element={<EcoProfile />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </BrowserRouter>
   )

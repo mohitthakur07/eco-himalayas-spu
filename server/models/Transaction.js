@@ -19,6 +19,19 @@ const transactionSchema = new mongoose.Schema({
         required: true,
         enum: ['reward', 'redemption'],
     },
+    blockchainTxHash: {
+        type: String,
+    },
+    blockchainProofHash: {
+        type: String,
+    },
+    blockchainVerified: {
+        type: Boolean,
+        default: false,
+    },
+    blockchainRewardTxHash: {
+        type: String,
+    },
 }, {
     timestamps: true,
 });

@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   try {
     console.log('Register attempt:', req.body);
-    const { username, email, password } = req.body;
+    const { username, email, password, country, state, district } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -27,6 +27,9 @@ router.post('/register', async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      country: country || 'India',
+      state: state || 'Himachal Pradesh',
+      district: district || 'Hamirpur',
     });
 
     await user.save();

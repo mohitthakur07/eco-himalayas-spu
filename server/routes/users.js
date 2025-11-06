@@ -42,4 +42,29 @@ router.get('/balance', authenticateToken, async (req, res) => {
   }
 });
 
+// Link wallet address to user
+router.post('/link-wallet', authenticateToken, async (req, res) => {
+  try {
+    const { walletAddress } = req.body;
+    
+    if (!walletAddress) {
+      return res.status(400).json({ error: 'Wallet address required' });
+    }
+    
+    // Update user
+    await User.findByIdAndUpdate(req.user.userId, {
+      walletAddress: walletAddress.toLowerCase(),
+      blockchainEnabled: true
+    });
+    
+    res.json({
+      message: 'Wallet linked successfully',
+      walletAddress
+    });
+  } catch (error) {
+    console.error('Link wallet error:', error);
+    res.status(500).json({ error: 'Failed to link wallet' });
+  }
+});
+
 export default router;

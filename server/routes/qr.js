@@ -6,6 +6,7 @@ import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
 import Device from '../models/Device.js';
 import { authenticateToken, authenticateDevice } from '../middleware/auth.js';
+import { simpleBlockchain } from '../services/simpleBlockchain.js';
 
 const router = express.Router();
 
@@ -127,10 +128,12 @@ router.post('/validate', authenticateDevice, async (req, res) => {
     qrCode.validatedBy = deviceId;
     await qrCode.save();
 
-    // Update user balance
-    await User.findByIdAndUpdate(qrCode.userId, {
-      $inc: { ecoBalance: reward }
-    });
+    // Update user balance and get user data
+    const user = await User.findByIdAndUpdate(
+      qrCode.userId,
+      { $inc: { ecoBalance: reward } },
+      { new: true } // Return updated user
+    );
 
     // Create transaction record
     const transaction = new Transaction({
@@ -140,6 +143,68 @@ router.post('/validate', authenticateDevice, async (req, res) => {
       type: 'reward'
     });
     await transaction.save();
+
+    // Create blockchain proof
+    if (process.env.BLOCKCHAIN_ENABLED === 'true' && simpleBlockchain.instance) {
+      const proofData = {
+        qrCode: qrData,
+        userId: qrCode.userId.toString(),
+        reward: reward,
+        wasteType: qrCode.wasteType,
+        weight: qrCode.estimatedWeight,
+        timestamp: new Date().toISOString(),
+        deviceId: deviceId
+      };
+      
+      // Create hash
+      const proofHash = simpleBlockchain.createProofHash(proofData);
+      
+      if (proofHash) {
+        // Store on blockchain (async, don't wait)
+        simpleBlockchain.storeProof(proofHash, proofData)
+          .then(result => {
+            if (result.success) {
+              console.log('✅ Blockchain proof:', result.transactionHash);
+              console.log('   Explorer:', result.explorerUrl);
+              
+              // Update transaction with blockchain proof
+              Transaction.findByIdAndUpdate(transaction._id, {
+                blockchainTxHash: result.transactionHash,
+                blockchainProofHash: proofHash,
+                blockchainVerified: true
+              }).catch(err => console.error('Failed to update transaction:', err));
+            } else {
+              console.log('ℹ️  Blockchain proof not stored:', result.error);
+            }
+          })
+          .catch(err => console.error('Blockchain error:', err));
+      }
+      
+      // Send blockchain tokens to user if wallet is linked
+      if (user.walletAddress && user.blockchainEnabled) {
+        console.log(`\n🎁 User has wallet linked: ${user.walletAddress}`);
+        
+        simpleBlockchain.sendRewardToUser(user.walletAddress, reward)
+          .then(rewardResult => {
+            if (rewardResult.success) {
+              console.log('✅ Blockchain tokens sent to user!');
+              console.log('   Amount:', rewardResult.amount, 'POL');
+              console.log('   TX:', rewardResult.transactionHash);
+              console.log('   Explorer:', rewardResult.explorerUrl);
+              
+              // Optionally save reward tx hash to transaction
+              Transaction.findByIdAndUpdate(transaction._id, {
+                blockchainRewardTxHash: rewardResult.transactionHash
+              }).catch(err => console.error('Failed to update reward tx:', err));
+            } else {
+              console.log('ℹ️  Blockchain tokens not sent:', rewardResult.error);
+            }
+          })
+          .catch(err => console.error('Blockchain reward error:', err));
+      } else {
+        console.log('ℹ️  User has no wallet linked, skipping blockchain token transfer');
+      }
+    }
 
     // Update device last seen
     await Device.findByIdAndUpdate(deviceId, {

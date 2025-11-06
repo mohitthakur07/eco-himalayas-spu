@@ -7,6 +7,8 @@ import qrRoutes from './routes/qr.js';
 import rewardRoutes from './routes/rewards.js';
 import deviceRoutes from './routes/devices.js';
 import userRoutes from './routes/users.js';
+import leaderboardRoutes from './routes/leaderboard.js';
+import eventRoutes from './routes/events.js';
 
 dotenv.config();
 
@@ -35,12 +37,16 @@ app.use('/api/qr', qrRoutes);
 app.use('/api/rewards', rewardRoutes);
 app.use('/api/devices', deviceRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/events', eventRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Eco Himalayas API is running' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🌲 Eco Himalayas Server running on port ${PORT}`);
+  console.log(`📱 Network access: http://0.0.0.0:${PORT}`);
+  console.log(`🌐 Local access: http://localhost:${PORT}`);
 });
