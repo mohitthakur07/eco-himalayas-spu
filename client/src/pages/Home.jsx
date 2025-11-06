@@ -1,4 +1,4 @@
-import { ArrowRight, Leaf, Recycle, TreePine, Droplet, Gift, Star, Award } from 'lucide-react'
+import { ArrowRight, Leaf, Recycle, TreePine, Droplet, Gift, Star, Award, QrCode, Scan, Zap } from 'lucide-react'
 import Header from '../components/Header'
 import BottomNav from '../components/BottomNav'
 import './Home.css'
@@ -11,6 +11,38 @@ const Home = () => {
       <Header />
 
       <div className="page-content">
+        {/* Hero QR Scanner Section */}
+        <div className="qr-hero-section">
+          <div className="qr-hero-content">
+            <div className="qr-hero-badge">
+              <Zap size={16} strokeWidth={2.5} />
+              <span>Instant Rewards</span>
+            </div>
+            <h2 className="qr-hero-title">Scan QR Code</h2>
+            <p className="qr-hero-subtitle">Complete eco-tasks and earn instant rewards</p>
+
+            <div className="qr-scanner-card">
+              <div className="qr-scanner-visual">
+                <div className="qr-scan-frame">
+                  <QrCode size={100} strokeWidth={1.5} />
+                  <div className="scan-line"></div>
+                </div>
+                <div className="qr-corner qr-corner-tl"></div>
+                <div className="qr-corner qr-corner-tr"></div>
+                <div className="qr-corner qr-corner-bl"></div>
+                <div className="qr-corner qr-corner-br"></div>
+              </div>
+
+              <button className="scan-btn-primary">
+                <Scan size={22} strokeWidth={2.5} />
+                Scan Now
+              </button>
+
+              <p className="qr-hint">Point your camera at any eco-task QR code</p>
+            </div>
+          </div>
+        </div>
+
         {/* Dashboard Grid for Desktop */}
         <div className="dashboard-grid">
           {/* Eco Points Balance Card */}
@@ -50,10 +82,7 @@ const Home = () => {
               ))}
             </div>
 
-            <button className="scan-btn">
-              <Leaf size={20} />
-              Start Task
-            </button>
+            <p className="progress-text">6 of 10 tasks completed</p>
           </div>
         </div>
 
