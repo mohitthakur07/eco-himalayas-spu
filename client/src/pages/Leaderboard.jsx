@@ -75,14 +75,14 @@ const Leaderboard = () => {
   return (
     <div className="app-container">
       <Header />
-      
+
       <div className="page-content">
         {/* Tabs */}
-        <div className="flex gap-2 mb-5 bg-gray-100 p-1 rounded-xl">
+        <div className="flex gap-2 mb-5 bg-gray-100 p-1.5 rounded-[20px]">
           <button
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all ${
-              activeTab === 'global' 
-                ? 'bg-white text-primary-600 shadow-sm' 
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-[15px] font-semibold text-sm transition-all ${
+              activeTab === 'global'
+                ? 'bg-white text-primary-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setActiveTab('global')}
@@ -91,9 +91,9 @@ const Leaderboard = () => {
             <span>Global</span>
           </button>
           <button
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all ${
-              activeTab === 'state' 
-                ? 'bg-white text-primary-600 shadow-sm' 
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-[15px] font-semibold text-sm transition-all ${
+              activeTab === 'state'
+                ? 'bg-white text-primary-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setActiveTab('state')}
@@ -102,9 +102,9 @@ const Leaderboard = () => {
             <span>State</span>
           </button>
           <button
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all ${
-              activeTab === 'district' 
-                ? 'bg-white text-primary-600 shadow-sm' 
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-[15px] font-semibold text-sm transition-all ${
+              activeTab === 'district'
+                ? 'bg-white text-primary-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
             onClick={() => setActiveTab('district')}
@@ -116,12 +116,12 @@ const Leaderboard = () => {
 
         {/* District Selector (only show when district tab is active) */}
         {activeTab === 'district' && districts.length > 0 && (
-          <div className="mb-4">
-            <select 
+          <div className="mb-5">
+            <select
               id="district-select"
               value={selectedDistrict}
               onChange={(e) => setSelectedDistrict(e.target.value)}
-              className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl font-medium text-gray-700 focus:border-primary-500 focus:outline-none transition-colors"
+              className="w-full px-4 py-3.5 bg-white border-2 border-gray-200 rounded-[15px] font-medium text-gray-700 focus:border-primary-500 focus:outline-none transition-colors"
             >
               {districts.map(district => (
                 <option key={district} value={district}>{district}</option>
@@ -134,24 +134,24 @@ const Leaderboard = () => {
         {activeTab === 'global' && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Top Users Globally</h2>
+              <h2 className="section-title">Top Users Globally</h2>
               <TrendingUp size={20} className="text-primary-500" />
             </div>
 
             {loading ? (
               <div className="text-center py-10 text-gray-500">Loading...</div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {globalLeaderboard.map((user) => (
-                  <div key={user.username} className="bg-white rounded-xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="w-10 flex items-center justify-center">
+                  <div key={user.username} className="bg-white rounded-[20px] p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="w-10 flex items-center justify-center flex-shrink-0">
                       {getRankIcon(user.rank)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 text-sm truncate">{user.username}</div>
                       <div className="text-xs text-gray-500 truncate">{user.district}, {user.state}</div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <div className="font-bold text-primary-600 text-lg">{user.ecoBalance}</div>
                       <div className="text-xs text-gray-400 uppercase tracking-wide">credits</div>
                     </div>
@@ -169,24 +169,24 @@ const Leaderboard = () => {
         {activeTab === 'state' && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Himachal Pradesh</h2>
+              <h2 className="section-title">Himachal Pradesh</h2>
               <MapPin size={20} className="text-primary-500" />
             </div>
 
             {loading ? (
               <div className="text-center py-10 text-gray-500">Loading...</div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {stateLeaderboard.map((user) => (
-                  <div key={user.username} className="bg-white rounded-xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="w-10 flex items-center justify-center">
+                  <div key={user.username} className="bg-white rounded-[20px] p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="w-10 flex items-center justify-center flex-shrink-0">
                       {getRankIcon(user.rank)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 text-sm truncate">{user.username}</div>
                       <div className="text-xs text-gray-500 truncate">{user.district}</div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <div className="font-bold text-primary-600 text-lg">{user.ecoBalance}</div>
                       <div className="text-xs text-gray-400 uppercase tracking-wide">credits</div>
                     </div>
@@ -204,24 +204,24 @@ const Leaderboard = () => {
         {activeTab === 'district' && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">{selectedDistrict || 'District'}</h2>
+              <h2 className="section-title">{selectedDistrict || 'District'}</h2>
               <Users size={20} className="text-primary-500" />
             </div>
 
             {loading ? (
               <div className="text-center py-10 text-gray-500">Loading...</div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {districtLeaderboard.map((user) => (
-                  <div key={user.username} className="bg-white rounded-xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="w-10 flex items-center justify-center">
+                  <div key={user.username} className="bg-white rounded-[20px] p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="w-10 flex items-center justify-center flex-shrink-0">
                       {getRankIcon(user.rank)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-gray-900 text-sm truncate">{user.username}</div>
                       <div className="text-xs text-gray-500 truncate">{user.district}</div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <div className="font-bold text-primary-600 text-lg">{user.ecoBalance}</div>
                       <div className="text-xs text-gray-400 uppercase tracking-wide">credits</div>
                     </div>

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { ArrowLeft, MoreVertical, ArrowRight, Hotel, Utensils, Backpack, MapPin, Leaf, Gift, Award, Plus } from 'lucide-react'
+import { ArrowRight, Hotel, Utensils, Backpack, MapPin, Leaf, Award, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import Header from '../components/Header'
 import BottomNav from '../components/BottomNav'
 import QRGenerator from '../components/QRGenerator'
 import { userService } from '../services/userService'
 import { rewardService } from '../services/rewardService'
 import { authService } from '../services/authService'
-import './Rewards.css'
 
 const Rewards = () => {
   const navigate = useNavigate()
@@ -14,6 +14,7 @@ const Rewards = () => {
   const [transactions, setTransactions] = useState([])
   const [showQRGenerator, setShowQRGenerator] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [activeCategory, setActiveCategory] = useState('All')
 
   useEffect(() => {
     loadData()
@@ -40,10 +41,10 @@ const Rewards = () => {
   }
 
   const stores = [
-    { name: 'All', active: true },
-    { name: 'Hotels', icon: Hotel, active: false },
-    { name: 'Food', icon: Utensils, active: false },
-    { name: 'Activities', icon: MapPin, active: false },
+    { name: 'All', icon: null },
+    { name: 'Hotels', icon: Hotel },
+    { name: 'Food', icon: Utensils },
+    { name: 'Activities', icon: MapPin },
   ]
 
   const offers = [
@@ -54,6 +55,7 @@ const Rewards = () => {
       image: Hotel,
       discount: '20% OFF',
       points: 100,
+      category: 'Hotels',
     },
     {
       store: 'Green Stamp',
@@ -62,6 +64,7 @@ const Rewards = () => {
       image: Utensils,
       discount: '15% OFF',
       points: 50,
+      category: 'Food',
     },
     {
       store: 'Green Stamp',
@@ -70,6 +73,7 @@ const Rewards = () => {
       image: Backpack,
       discount: '25% OFF',
       points: 80,
+      category: 'Activities',
     },
     {
       store: 'Green Stamp',
@@ -78,55 +82,62 @@ const Rewards = () => {
       image: MapPin,
       discount: '30% OFF',
       points: 150,
+      category: 'Activities',
     },
   ]
 
+  const filteredOffers = activeCategory === 'All'
+    ? offers
+    : offers.filter(offer => offer.category === activeCategory)
+
   return (
     <div className="app-container">
-      <div className="rewards-header">
-        <div className="rewards-header-content">
-          <button className="back-btn" onClick={() => navigate('/')}>
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="page-title">Rewards</h1>
-          <button className="more-btn">
-            <MoreVertical size={24} />
-          </button>
-        </div>
-      </div>
+      <Header />
 
       <div className="page-content">
         {/* Eco Points Balance Card */}
         <div className="balance-card">
-          <div className="balance-header">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="balance-label">Eco Points</p>
-              <h1 className="balance-amount">
-                <Leaf size={32} strokeWidth={2.5} style={{ marginRight: '8px' }} />
+              <p className="text-sm text-primary-700 font-medium mb-1">Eco Points</p>
+              <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-2">
+                <Leaf size={32} strokeWidth={2.5} className="text-primary-500" />
                 {loading ? '...' : balance}
               </h1>
             </div>
-            <button className="gift-btn" onClick={() => setShowQRGenerator(true)}>
-              <Plus size={24} />
+            <button
+              onClick={() => setShowQRGenerator(true)}
+              className="w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all active:scale-95"
+            >
+              <Plus size={24} className="text-primary-600" />
             </button>
           </div>
-          <button className="rewards-link" onClick={() => setShowQRGenerator(true)}>
+          <button
+            onClick={() => setShowQRGenerator(true)}
+            className="text-sm text-primary-700 font-semibold flex items-center gap-1 hover:gap-2 transition-all"
+          >
             Generate QR Code <ArrowRight size={16} />
           </button>
         </div>
 
         {/* Category Filter */}
-        <div className="store-section">
+        <div className="mb-5 md:mb-7">
           <h3 className="section-title">Green Stamp Partners</h3>
-          <div className="store-filters">
+          <div className="flex gap-2.5 overflow-x-auto pb-2.5 scrollbar-hide">
             {stores.map((store, index) => {
               const StoreIcon = store.icon
+              const isActive = activeCategory === store.name
               return (
                 <button
                   key={index}
-                  className={`store-btn ${store.active ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(store.name)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-[25px] text-sm font-medium whitespace-nowrap transition-all border-2 ${
+                    isActive
+                      ? 'bg-primary-500 text-white border-primary-500'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-primary-300'
+                  }`}
                 >
-                  {StoreIcon && <StoreIcon size={18} className="store-logo" />}
+                  {StoreIcon && <StoreIcon size={18} />}
                   {store.name}
                 </button>
               )
@@ -134,32 +145,35 @@ const Rewards = () => {
           </div>
         </div>
 
-        {/* Offers */}
-        <div className="offers-section">
-          {offers.map((offer, index) => {
+        {/* Offers Grid */}
+        <div className="flex flex-col gap-5 md:grid md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4 xl:gap-10">
+          {filteredOffers.map((offer, index) => {
             const OfferImage = offer.image
             const OfferIcon = offer.icon
             return (
-              <div key={index} className="offer-card">
-                <div className="offer-image">
-                  <div className="product-image">
+              <div key={index} className="bg-white rounded-[20px] overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                {/* Offer Image */}
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 flex items-center justify-center relative min-h-[200px]">
+                  <div className="text-primary-500">
                     <OfferImage size={64} strokeWidth={1.5} />
                   </div>
-                  <div className="points-badge">
-                    <Award size={16} />
-                    <span className="points">{offer.points}</span>
+                  <div className="absolute bottom-5 left-5 bg-white rounded-[20px] px-4 py-2 flex items-center gap-1.5 shadow-md">
+                    <Award size={16} className="text-primary-500" />
+                    <span className="font-semibold text-sm text-gray-900">{offer.points}</span>
                   </div>
                 </div>
-                <div className="offer-info">
-                  <div className="store-badge">
-                    <div className="store-icon">
+
+                {/* Offer Info */}
+                <div className="p-4">
+                  <div className="flex items-center gap-3 bg-gray-50 rounded-[15px] p-4">
+                    <div className="w-10 h-10 bg-white rounded-[10px] flex items-center justify-center text-primary-500 flex-shrink-0">
                       <OfferIcon size={20} />
                     </div>
-                    <div>
-                      <p className="store-name">{offer.store}</p>
-                      <p className="offer-text">Digital Offer {offer.discount}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-base font-semibold text-gray-900 truncate">{offer.store}</p>
+                      <p className="text-xs text-gray-500 truncate">Digital Offer {offer.discount}</p>
                     </div>
-                    <ArrowRight className="arrow-icon" size={20} />
+                    <ArrowRight size={20} className="text-gray-900 flex-shrink-0" />
                   </div>
                 </div>
               </div>
@@ -171,7 +185,7 @@ const Rewards = () => {
       <BottomNav />
 
       {showQRGenerator && (
-        <QRGenerator 
+        <QRGenerator
           onClose={() => setShowQRGenerator(false)}
           onGenerated={handleQRGenerated}
         />

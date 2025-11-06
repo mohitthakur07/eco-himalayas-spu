@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Leaf, Gift, QrCode, Zap, Sparkles } from 'lucide-react'
+import { Gift, QrCode, ArrowRight, Recycle, TreePine, Droplet, Award, Leaf } from 'lucide-react'
 import Header from '../components/Header'
 import BottomNav from '../components/BottomNav'
 import QRGenerator from '../components/QRGenerator'
@@ -7,9 +7,8 @@ import { authService } from '../services/authService'
 import { userService } from '../services/userService'
 
 const Home = () => {
-  const rewardStars = Array(10).fill(0)
   const [user, setUser] = useState(null)
-  const [balance, setBalance] = useState(0)
+  const [ecoPoints, setEcoPoints] = useState(0)
   const [loading, setLoading] = useState(true)
   const [showQRGenerator, setShowQRGenerator] = useState(false)
 
@@ -22,8 +21,8 @@ const Home = () => {
       const currentUser = authService.getCurrentUser()
       if (currentUser) {
         setUser(currentUser)
-        const balanceData = await userService.getBalance()
-        setBalance(balanceData.balance)
+        const profileData = await userService.getProfile()
+        setEcoPoints(profileData.user?.ecoBalance || 0)
       }
     } catch (error) {
       console.error('Failed to load user data:', error)
@@ -33,7 +32,7 @@ const Home = () => {
   }
 
   const handleQRGenerated = () => {
-    loadUserData() // Refresh balance after QR generation
+    loadUserData()
   }
 
   const handleGenerateClick = () => {
@@ -48,49 +47,124 @@ const Home = () => {
     <div className="app-container">
       <Header />
 
+      {/* Main Content */}
       <div className="page-content">
-        {/* Hero QR Scanner Section */}
-        <div className="mb-6">
-          <div className="text-center mb-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-semibold mb-3">
-              <Zap size={16} strokeWidth={2.5} />
-              <span>Instant Rewards</span>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Generate QR codes and earn surprise eco-coins!</h2>
-          </div>
 
-          <div className="bg-gradient-to-br from-primary-50 to-green-100 rounded-3xl p-8 text-center shadow-lg">
-            <div className="relative mb-6">
-              <div className="w-28 h-28 mx-auto bg-white rounded-2xl flex items-center justify-center shadow-md">
-                <QrCode size={80} strokeWidth={1.5} className="text-primary-600" />
-              </div>
-            </div>
+        {/* QR Scanner Hero Section */}
+        <div className="bg-gradient-to-br from-primary-400 via-primary-500 to-emerald-600 rounded-[25px] p-8 mb-5 shadow-xl relative overflow-hidden">
+          {/* Decorative circles */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
 
-            <button 
-              className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl active:scale-95 mb-3"
+          <div className="relative z-10 text-center">
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+              <QrCode size={40} className="text-white" strokeWidth={2.5} />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Scan & Earn Rewards</h2>
+            <p className="text-white/90 text-sm md:text-base mb-6">Scan QR codes at eco-friendly locations to collect points</p>
+
+            {/* Scan Button */}
+            <button
               onClick={handleGenerateClick}
+              className="bg-white text-primary-600 font-bold py-4 px-8 rounded-[15px] flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-2xl active:scale-95 mx-auto hover:bg-gray-50"
             >
-              <Sparkles size={22} strokeWidth={2.5} />
-              Generate & Earn
+              <QrCode size={24} strokeWidth={2.5} />
+              <span className="text-lg">Scan Now</span>
             </button>
-
-            <p className="text-sm text-gray-600 font-medium">Get 5-60 eco-coins per QR code!</p>
           </div>
         </div>
 
-        {/* Eco Points Balance Card */}
-        <div className="bg-white rounded-3xl p-6 shadow-lg mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Eco Points</p>
-              <h1 className="text-4xl font-bold text-gray-900 flex items-center">
-                <Leaf size={32} strokeWidth={2.5} className="text-primary-500 mr-2" />
-                {loading ? '...' : balance}
-              </h1>
+        {/* Eco Points Display */}
+        <div className="grid grid-cols-2 gap-4 mb-5">
+          {/* Current Balance */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-[20px] p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                <Leaf size={20} className="text-white" strokeWidth={2.5} />
+              </div>
+              <p className="text-xs text-green-700 font-semibold">Eco Points</p>
             </div>
-            <button className="w-12 h-12 bg-yellow-50 hover:bg-yellow-100 rounded-full flex items-center justify-center transition-colors">
-              <Gift size={24} className="text-yellow-600" />
-            </button>
+            <p className="text-3xl font-bold text-gray-900">{loading ? '...' : ecoPoints}</p>
+            <p className="text-xs text-gray-600 mt-1">Current Balance</p>
+          </div>
+
+          {/* Rewards Available */}
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-[20px] p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center">
+                <Gift size={20} className="text-white" strokeWidth={2.5} />
+              </div>
+              <p className="text-xs text-purple-700 font-semibold">Rewards</p>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">5</p>
+            <p className="text-xs text-gray-600 mt-1">Available to Claim</p>
+          </div>
+        </div>
+
+        {/* Eco Tasks Section */}
+        <div className="mb-5">
+          <h3 className="section-title">Eco-Friendly Tasks</h3>
+
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Task Card 1 */}
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[20px] p-5 relative overflow-hidden group hover:shadow-md transition-all cursor-pointer">
+              <div className="absolute top-3 right-3 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <Recycle size={20} className="text-blue-600" />
+              </div>
+              <div className="mt-8">
+                <p className="text-sm font-semibold text-blue-700 mb-1">Waste Management</p>
+                <p className="text-xs text-gray-600 mb-3 line-clamp-2">Properly dispose waste at designated bins</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-blue-600">+50 pts</span>
+                  <ArrowRight size={16} className="text-blue-600 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
+            {/* Task Card 2 */}
+            <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-[20px] p-5 relative overflow-hidden group hover:shadow-md transition-all cursor-pointer">
+              <div className="absolute top-3 right-3 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <Droplet size={20} className="text-pink-600" />
+              </div>
+              <div className="mt-8">
+                <p className="text-sm font-semibold text-pink-700 mb-1">Water Conservation</p>
+                <p className="text-xs text-gray-600 mb-3 line-clamp-2">Use refillable bottles during your trek</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-pink-600">+30 pts</span>
+                  <ArrowRight size={16} className="text-pink-600 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
+            {/* Task Card 3 */}
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-[20px] p-5 relative overflow-hidden group hover:shadow-md transition-all cursor-pointer">
+              <div className="absolute top-3 right-3 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <Award size={20} className="text-green-600" />
+              </div>
+              <div className="mt-8">
+                <p className="text-sm font-semibold text-green-700 mb-1">Support Local</p>
+                <p className="text-xs text-gray-600 mb-3 line-clamp-2">Shop at Green Stamp certified businesses</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-green-600">+40 pts</span>
+                  <ArrowRight size={16} className="text-green-600 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+
+            {/* Task Card 4 */}
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-[20px] p-5 relative overflow-hidden group hover:shadow-md transition-all cursor-pointer">
+              <div className="absolute top-3 right-3 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <TreePine size={20} className="text-emerald-600" />
+              </div>
+              <div className="mt-8">
+                <p className="text-sm font-semibold text-emerald-700 mb-1">Trail Respect</p>
+                <p className="text-xs text-gray-600 mb-3 line-clamp-2">Stay on marked paths, protect wildlife</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-emerald-600">+35 pts</span>
+                  <ArrowRight size={16} className="text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -98,7 +172,7 @@ const Home = () => {
       <BottomNav />
 
       {showQRGenerator && (
-        <QRGenerator 
+        <QRGenerator
           onClose={() => setShowQRGenerator(false)}
           onGenerated={handleQRGenerated}
         />

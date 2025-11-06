@@ -76,8 +76,8 @@ const Header = ({ userName }) => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 bg-white shadow-sm border-b border-gray-100 z-50">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
+        <div className="max-w-[28rem] md:max-w-full mx-auto px-5 md:px-10 lg:px-16 xl:px-20 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white shadow-lg">
               <Leaf size={24} strokeWidth={2.5} />
@@ -92,7 +92,7 @@ const Header = ({ userName }) => {
               <Bell size={20} />
             </button>
             {user && (
-              <button 
+              <button
                 onClick={handleConnectWallet}
                 disabled={connecting}
                 title={walletAddress ? `Connected: ${walletAddress}` : 'Connect Wallet'}
@@ -103,16 +103,16 @@ const Header = ({ userName }) => {
               </button>
             )}
             {user ? (
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 title="Logout"
                 className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-50 transition-colors text-red-600"
               >
                 <LogOut size={20} />
               </button>
             ) : (
-              <button 
-                onClick={() => setShowAuthModal(true)} 
+              <button
+                onClick={() => setShowAuthModal(true)}
                 title="Login"
                 className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-primary-50 transition-colors text-primary-600"
               >
@@ -124,7 +124,7 @@ const Header = ({ userName }) => {
       </div>
 
       {showAuthModal && (
-        <AuthModal 
+        <AuthModal
           onClose={() => setShowAuthModal(false)}
           onSuccess={() => setUser(authService.getCurrentUser())}
         />
