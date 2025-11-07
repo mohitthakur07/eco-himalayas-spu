@@ -1,10 +1,12 @@
 import express from 'express';
 import QRCode from 'qrcode';
+import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import QRCodeModel from '../models/QRCode.js';
 import User from '../models/User.js';
 import Transaction from '../models/Transaction.js';
 import Device from '../models/Device.js';
+import ArenaSession from '../models/ArenaSession.js';
 import { authenticateToken, authenticateDevice } from '../middleware/auth.js';
 import { simpleBlockchain } from '../services/simpleBlockchain.js';
 
@@ -33,11 +35,26 @@ router.post('/generate', authenticateToken, async (req, res) => {
     }
 
     const qrId = uuidv4();
-    const qrData = `ECO-${qrId}`;
+    
+    // Generate JWT for QR code authentication
+    const qrToken = jwt.sign(
+      {
+        userId: userId,
+        qrId: qrId,
+        type: 'arena-entry',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' } // QR valid for 24 hours
+    );
+    
+    const qrData = JSON.stringify({
+      qrId: qrId,
+      token: qrToken,
+    });
 
     const qrCodeDoc = new QRCodeModel({
       userId,
-      qrData,
+      qrData: qrId, // Store just the ID for reference
       wasteType,
       estimatedWeight: parseFloat(estimatedWeight),
     });
@@ -91,8 +108,16 @@ router.get('/user/:userId', authenticateToken, async (req, res) => {
   }
 });
 
-// Validate QR Code (Raspberry Pi endpoint)
+// Validate QR Code (Raspberry Pi endpoint) - DEPRECATED
+// Use Arena system (/api/arena/scan-qr) instead for garbage detection rewards
 router.post('/validate', authenticateDevice, async (req, res) => {
+  return res.status(410).json({ 
+    error: 'Endpoint deprecated',
+    message: 'Please use /api/arena/scan-qr for garbage detection rewards',
+    note: 'Eco-coins are now only awarded through the Arena garbage detection system'
+  });
+  
+  /* DISABLED - Old reward system
   try {
     const { qrData, deviceId } = req.body;
 

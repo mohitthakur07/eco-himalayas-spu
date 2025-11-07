@@ -18,11 +18,21 @@ export const authenticateToken = (req, res, next) => {
 };
 
 export const authenticateDevice = (req, res, next) => {
-  const apiKey = req.headers['x-api-key'];
+  const apiKey = req.headers['x-device-api-key'];
 
-  if (!apiKey || apiKey !== process.env.DEVICE_API_KEY) {
+  if (!apiKey) {
+    console.error('❌ Device auth failed: No x-device-api-key header');
+    return res.status(401).json({ error: 'Device API key required' });
+  }
+
+  if (apiKey !== process.env.DEVICE_API_KEY) {
+    console.error('❌ Device auth failed: Invalid API key');
+    console.error('   Expected:', process.env.DEVICE_API_KEY);
+    console.error('   Received:', apiKey);
     return res.status(401).json({ error: 'Invalid device API key' });
   }
 
+  console.log('✅ Device authenticated');
+  req.device = { deviceId: 'RPI-STATION-01' };
   next();
 };

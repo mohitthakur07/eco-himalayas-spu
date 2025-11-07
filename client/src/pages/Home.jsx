@@ -3,6 +3,7 @@ import { Gift, QrCode, ArrowRight, Recycle, TreePine, Droplet, Award, Leaf } fro
 import Header from '../components/Header'
 import BottomNav from '../components/BottomNav'
 import QRGenerator from '../components/QRGenerator'
+import TransferToWallet from '../components/TransferToWallet'
 import { authService } from '../services/authService'
 import { userService } from '../services/userService'
 
@@ -100,6 +101,16 @@ const Home = () => {
             <p className="text-xs text-gray-600 mt-1">Available to Claim</p>
           </div>
         </div>
+
+        {/* Transfer to Wallet Section */}
+        {user && (
+          <div className="mb-5">
+            <TransferToWallet 
+              user={{ ...user, ecoBalance: ecoPoints }} 
+              onTransferComplete={loadUserData}
+            />
+          </div>
+        )}
 
         {/* Eco Tasks Section */}
         <div className="mb-5">

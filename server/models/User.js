@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  totalEarned: {
+    type: Number,
+    default: 0,
+  },
+  totalRedeemed: {
+    type: Number,
+    default: 0,
+  },
   country: {
     type: String,
     default: 'India',

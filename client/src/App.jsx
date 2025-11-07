@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Rewards from './pages/Rewards'
 import EcoProfile from './pages/EcoProfile'
 import Leaderboard from './pages/Leaderboard'
+import ArenaWindow from './components/ArenaWindow'
 
 function App() {
   return (
@@ -13,6 +14,9 @@ function App() {
         <Route path="/shop" element={<EcoProfile />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
+      
+      {/* Arena Window - Always mounted, shows when session active */}
+      <ArenaWindow />
     </BrowserRouter>
   )
 }

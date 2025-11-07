@@ -212,17 +212,22 @@ router.post('/:id/validate-qr', authenticateToken, async (req, res) => {
     qrCode.validatedAt = new Date();
     await qrCode.save();
 
-    // Award coins
-    const reward = event.rewardPerParticipant;
+    // Award coins - DISABLED
+    // Eco-coins now ONLY awarded through Arena garbage detection system
+    const reward = 0; // event.rewardPerParticipant;
+    
+    /* DISABLED - Old event reward system
     await User.findByIdAndUpdate(qrCode.userId, {
       $inc: { ecoBalance: reward }
     });
+    */
 
-    // Update participant coins
-    participant.coinsEarned += reward;
-    event.totalCoinsDistributed += reward;
+    // Update participant tracking (no coins awarded)
+    participant.coinsEarned += 0; // Track attendance but no coins
+    event.totalCoinsDistributed += 0;
     await event.save();
 
+    /* DISABLED - No transaction created
     // Create transaction
     const transaction = new Transaction({
       userId: qrCode.userId,
@@ -231,6 +236,7 @@ router.post('/:id/validate-qr', authenticateToken, async (req, res) => {
       type: 'reward',
     });
     await transaction.save();
+    */
 
     res.json({
       message: 'QR code validated successfully',
